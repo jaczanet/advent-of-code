@@ -15,7 +15,6 @@ with open('2025/day-02-input.txt') as file:
 
 # Solution
 
-
 def isrepeatedslice(string: str, slicelen: int) -> bool:
     """Check if a string is formed as a repeated slice of length 'slicelen'"""
     slices = (string[i : i + slicelen] for i in range(0, len(string), slicelen))
@@ -32,10 +31,17 @@ def istwice(id: int) -> bool:
     return isrepeatedslice(string, length // 2)
 
 
+def possibleslices(string: str) -> 'iterator[int]':
+    length = len(string)
+    for slicelen in range(1, length // 2 + 1):
+        if length % slicelen == 0:
+            yield slicelen
+
+
 def isrepetition(id: int) -> bool:
     string = str(id)
 
-    for slicelen in range(1, len(string) // 2 + 1):
+    for slicelen in possibleslices(string):
         if isrepeatedslice(string, slicelen):
             return True
 
