@@ -15,48 +15,41 @@ with open('2025/day-02-input.txt') as file:
 
 # Solution
 
-def isrepeatedslice(string: str, slicelen: int) -> bool:
-    """Check if a string is formed as a repeated slice of length 'slicelen'"""
-    slices = (string[i : i + slicelen] for i in range(0, len(string), slicelen))
-    return len(set(slices)) == 1
+def submultiples(n: int) -> set[int]:
+    submultiples = set()
+    for i in range(1, int(n ** (1 / 2)) + 1):
+        if n % i == 0:
+            submultiples.add(i)
+            submultiples.add(n // i)
+    submultiples.remove(n)
+    return submultiples
 
 
-def istwice(id: int) -> bool:
-    string = str(id)
-
-    # when it's of odd length
-    if (length := len(string)) % 2:
-        return False
-
-    return isrepeatedslice(string, length // 2)
-
-
-def possibleslices(string: str) -> 'iterator[int]':
-    length = len(string)
-    for slicelen in range(1, length // 2 + 1):
-        if length % slicelen == 0:
-            yield slicelen
-
-
-def isrepetition(id: int) -> bool:
-    string = str(id)
-
-    for slicelen in possibleslices(string):
-        if isrepeatedslice(string, slicelen):
-            return True
-
-
-repeatedtwice = 0
-atleasttwice = 0
+twice = 0
+repeated = 0
 
 for idrange in ranges:
     for id in idrange:
 
-        if istwice(id):
-            repeatedtwice += id
+        string = str(id)
+        length = len(string)
 
-        if isrepetition(id):
-            atleasttwice += id
+        for slicelen in sorted(submultiples(length), reverse=True):
+            slices = (string[i : i + slicelen] for i in range(0, length, slicelen))
 
-print('Silver solution:', repeatedtwice)
-print('Gold solution:', atleasttwice)
+            pattern = next(slices)
+            for slice in slices:
+
+                if slice != pattern:
+                    break
+
+            else:
+                repeated += id
+
+                if length == slicelen * 2:
+                    twice += id
+
+                break
+
+print('Silver solution:', twice)
+print('Gold solution:', repeated)
