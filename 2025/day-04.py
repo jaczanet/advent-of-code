@@ -34,23 +34,50 @@ def neighbours(center: Position) -> set[Position]:
 
 
 class Diagram(list):
-    def __getitem__(self, index):
+
+    def __getitem__(self, index, /):
         if isinstance(index, tuple):
             return super().__getitem__(index[0])[index[1]]
         else:
             return super().__getitem__(index)
 
+    def __setitem__(self, index, value, /):
+        if isinstance(index, tuple):
+            self[index[0]][index[1]] = value
+        else:
+            super().__setitem__(index, value)
+
 
 diagram = Diagram(diagram)
 
 
-count = 0
-for pos in starmap(Position, product(range(cells), repeat=2)):
-    if (elem := diagram[pos]) == '.':
-        continue
+def remove(diagram: Diagram) -> int:
+    """Edits the matrix *IN PLACE* and returns the amount of removed paper rools."""
+    count = 0
+    collecting = set()
 
-    paperaround = [diagram[neighpos] for neighpos in neighbours(pos)].count('@')
-    if paperaround < 4:
-        count += 1
+    for pos in starmap(Position, product(range(cells), repeat=2)):
+        if (elem := diagram[pos]) == '.' or elem == 'x':
+            continue
 
-print('Silver solution:', count)
+        paperaround = [diagram[neighpos] for neighpos in neighbours(pos)].count('@')
+        if paperaround < 4:
+            collecting.add(pos)
+            count += 1
+
+    for pos in collecting:
+        diagram[pos] = 'x'
+
+    return count
+
+
+collected = 0
+collected += remove(diagram)
+print('Silver solution:', collected)
+
+total = collected
+while collected:
+    collected = remove(diagram)
+    total += collected
+
+print('Gold solution:', total)
