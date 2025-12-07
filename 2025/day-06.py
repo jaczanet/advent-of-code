@@ -2,32 +2,64 @@
 
 from operator import add, mul
 
+
+# Constants
+
+operators = {'+': add, '*': mul}
+
+
 # Input
 
 with open('2025/day-06-input.txt') as file:
     worksheet = map(str.split, file)
     problems = [
         {
-            'operation': {'+': add, '*': mul}[column[-1]],
+            'operation': operators[column[-1]],
             'numbers': tuple(map(int, column[:-1])),
         }
         for column in zip(*worksheet)
     ]
 
 
+cephalopodmath = list()
+with open('2025/day-06-input.txt') as file:
+    lines = file.read().strip().split('\n')
+
+padding = len(max(lines, key=len)) + 1  # '+1' to add an empty column after the last problem
+addpadding = lambda string: f'{string:<{padding}}'
+columns = zip(*map(addpadding, lines), strict=True)
+
+numbers = list()
+for column in columns:
+    if not numbers:
+        operation = column[-1]
+    content = ''.join(column[:-1]).strip()
+    if content:
+        numbers.append(content)
+    else:  # empty column found: delimiter for problem's end
+        cephalopodmath.append(
+            {
+                'operation': operators[operation],
+                'numbers': tuple(map(int, numbers)),
+            }
+        )
+        numbers.clear()
+
+
 # Solution
 
+identity = {add: 0, mul: 1}
 
-sumproblems = 0
-for problem in problems:
+def solve(problem) -> int:
 
     operation = problem['operation']
-    identity = {add: 0, mul: 1}
     result = identity[operation]
 
     for number in problem['numbers']:
         result = operation(result, number)
 
-    sumproblems += result
+    return result
 
-print('Silver solution:', sumproblems)
+
+print('Silver solution:', sum(map(solve, problems)))
+print('Gold solution:', sum(map(solve, cephalopodmath)))
