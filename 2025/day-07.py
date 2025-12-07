@@ -20,6 +20,7 @@ manifold = tuple(
 
 # Solution
 
+
 class Direction(Enum):
     LEFT = -1
     RIGHT = 1
@@ -81,4 +82,4 @@ def timelines(beam, manifold) -> int:
 
 
 print('Silver solution:', splits(beam, manifold))
-print('Silver solution:', timelines(beam, manifold))
+print('Gold solution:', timelines(beam, manifold))

@@ -3,36 +3,10 @@
 from itertools import product
 
 
-class Matrix(list):
-    # Essentially a list of lists that enables indexing using tuples
-    # e.g. matrix[(x, y)]
-    # e.g. matrix[x, y]
-    # which are equivalent to matrix[x][y]
-
-    def __getitem__(self, index, /):
-        if isinstance(index, tuple):
-            if len(index) > 2:
-                raise ValueError("Index must be a tuple of exactly two elements (for 2D indexing).")
-            return super().__getitem__(index[0])[index[1]]
-        else:
-            return super().__getitem__(index)
-
-    def __setitem__(self, index, value, /):
-        if isinstance(index, tuple):
-            if len(index) > 2:
-                raise ValueError("Index must be a tuple of exactly two elements (for 2D indexing).")
-            self[index[0]][index[1]] = value
-        else:
-            super().__setitem__(index, value)
-
-
-Position = tuple[int]
-
-
 # Input
 
 with open('2025/day-04-input.txt') as file:
-    diagram = Matrix(list(line.strip()) for line in file)
+    diagram = tuple(list(line.strip()) for line in file)
 
 
 # Solution
@@ -41,7 +15,7 @@ cells = len(diagram)
 iswithinbounds = lambda x, y: 0 <= x < cells and 0 <= y < cells
 
 
-def neighbours(center: Position) -> set[Position]:
+def neighbours(center) -> set:
     """Given a center position, returns a set of all the neighbouring positions in the diagram."""
     x, y = center
     positions = {
@@ -53,20 +27,21 @@ def neighbours(center: Position) -> set[Position]:
     return positions
 
 
-def remove(diagram: Matrix) -> int:
+def remove(diagram) -> int:
     """Edits the matrix *IN PLACE* and returns the amount of removed paper rools."""
-    collecting: set[Position] = set()
+    collecting = list()  # stores (x, y) positions of the removable paper rolls
 
-    for pos in product(range(cells), repeat=2):
-        if diagram[pos] == '@':
+    for x, y in product(range(cells), repeat=2):
+        if diagram[x][y] == '@':
+            position = (x, y)
 
-            paperaround = [diagram[neighpos] for neighpos in neighbours(pos)].count('@')
+            paperaround = [diagram[x][y] for x, y in neighbours(position)].count('@')
 
             if paperaround < 4:
-                collecting.add(pos)
+                collecting.append(position)
 
-    for pos in collecting:
-        diagram[pos] = 'x'
+    for x, y in collecting:
+        diagram[x][y] = 'x'
 
     return len(collecting)
 

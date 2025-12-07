@@ -26,7 +26,7 @@ with open('2025/day-06-input.txt') as file:
     lines = file.read().strip().split('\n')
 
 padding = len(max(lines, key=len)) + 1  # '+1' to add an empty column after the last problem
-addpadding = lambda string: f'{string:<{padding}}'
+addpadding = lambda string: string.ljust(padding)
 columns = zip(*map(addpadding, lines), strict=True)
 
 numbers = list()
@@ -49,6 +49,7 @@ for column in columns:
 # Solution
 
 identity = {add: 0, mul: 1}
+
 
 def solve(problem) -> int:
 
