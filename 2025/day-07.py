@@ -1,5 +1,7 @@
 # https://adventofcode.com/2025/day/7
 
+from functools import partial
+
 
 # Input
 
@@ -10,8 +12,10 @@ with open('2025/day-07-input.txt') as file:
 
 beam = int(start.replace('.', '0').replace('S', '1'), base=2)
 manifold = tuple(
-    int(scheme.replace('.', '0').replace('^', '1'), base=2)
-    for scheme in diagram.split('\n')[1::2]
+    map(
+        partial(int, base=2),
+        diagram.replace('.', '0').replace('^', '1').split('\n')[1::2],
+    )
 )
 
 
@@ -31,7 +35,7 @@ for splitters in manifold:
     beam &= ~splitters  # keep untouched beams
     beam |= new  # add new splitted beams
 
-    mask = bin(hits)[2:].rjust(bits)
+    mask = bin(hits)[2:].rjust(bits, '0')
     for i, bit in enumerate(mask):
         if bit == '1':
 

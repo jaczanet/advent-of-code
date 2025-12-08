@@ -1,6 +1,7 @@
 # https://adventofcode.com/2025/day/6
 
 from operator import add, mul
+from functools import reduce
 
 
 # Constants
@@ -48,19 +49,7 @@ for column in columns:
 
 # Solution
 
-identity = {add: 0, mul: 1}
-
-
-def solve(problem) -> int:
-
-    operation = problem['operation']
-    result = identity[operation]
-
-    for number in problem['numbers']:
-        result = operation(result, number)
-
-    return result
-
+solve = lambda problem: reduce(problem['operation'], problem['numbers'])
 
 print('Silver solution:', sum(map(solve, problems)))
 print('Gold solution:', sum(map(solve, cephalopodmath)))
