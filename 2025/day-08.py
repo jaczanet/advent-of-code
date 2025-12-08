@@ -1,50 +1,57 @@
 # https://adventofcode.com/2025/day/8
 
+from csv import reader as csvreader
 from collections import namedtuple, Counter
+from itertools import combinations
 from math import sqrt, prod
 
 
-Point = namedtuple('Point', ['x', 'y', 'z'])
+Position = namedtuple('Position', ['x', 'y', 'z'])
 Connection = namedtuple('Connection', ['i', 'j', 'distance'])
 
 
 # Constants
 
+# for silver part
 n = 1000  # total number of connections to perform
-m = 3  # total number of largest circuits to be considered
+m = 3  # number of largest circuits to be considered
 
 
 # Input
 
 with open('2025/day-08-input.txt') as file:
-    jboxs = tuple(Point(*map(int, coords.split(','))) for coords in file.read().strip().split('\n'))
+    jboxs = tuple(Position(*map(int, coords)) for coords in csvreader(file))
 
 
 # Solution
 
 euclideandistance = lambda p, q: sqrt(sum((pcoord - qcoord) ** 2 for pcoord, qcoord in zip(p, q, strict=True)))
 
-adjacencymatrix = tuple(tuple(euclideandistance(p, q) for q in jboxs) for p in jboxs)
-
 edges = [
-    Connection(i, j, distance)
-    for i, row in enumerate(adjacencymatrix)
-    for j, distance in enumerate(row[i:], start=i)
-    if distance
+    Connection(i, j, euclideandistance(jboxs[i], jboxs[j]))
+    for i, j in combinations(range(len(jboxs)), 2)
+    if i != j
 ]
 edges.sort(key=lambda connection: connection.distance)
 
 parent = list(range(len(jboxs)))  # track the root jbox for every circuit
 
-# perform connection for first n (shortest) edges
-for i, j, distance in edges[:n]:
-    i = parent[i]
-    j = parent[j]
+connections = 0
+# perform connections until only one circuit (disjoint set) remains
+for i, j, distance in edges:
+    u = parent[i]
+    v = parent[j]
     # substitute the root of j with the root of i
     for idx, p in enumerate(parent):
-        if p == j:
-            parent[idx] = i
+        if p == v:
+            parent[idx] = u
 
-circuits = Counter(parent)
+    connections += 1
 
-print('Silver solution:', prod(size for root, size in circuits.most_common(m)))
+    if connections == n:
+        circuits = Counter(parent)
+        print('Silver solution:', prod(size for root, size in circuits.most_common(m)))
+
+    if all(p == u for p in parent):
+        print('Gold solution:', jboxs[i].x * jboxs[j].x)
+        break
