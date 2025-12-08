@@ -41,7 +41,9 @@ for i, j, distance in edges[:n]:
     i = parent[i]
     j = parent[j]
     # substitute the root of j with the root of i
-    parent = [p if p != j else i for p in parent]
+    for idx, p in enumerate(parent):
+        if p == j:
+            parent[idx] = i
 
 circuits = Counter(parent)
 
