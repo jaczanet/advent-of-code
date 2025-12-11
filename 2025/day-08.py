@@ -1,5 +1,6 @@
 # https://adventofcode.com/2025/day/8
 
+
 from csv import reader as csvreader
 from collections import namedtuple
 from itertools import combinations
