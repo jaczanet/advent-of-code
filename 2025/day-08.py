@@ -1,13 +1,51 @@
 # https://adventofcode.com/2025/day/8
 
 from csv import reader as csvreader
-from collections import namedtuple, Counter
+from collections import namedtuple
 from itertools import combinations
-from math import sqrt, prod
+from heapq import heapify, heappop, nlargest
+from math import prod
 
 
 Position = namedtuple('Position', ['x', 'y', 'z'])
-Connection = namedtuple('Connection', ['i', 'j', 'distance'])
+
+
+class UnionFind:
+
+    __slots__ = '_disjoint', '_parents', '_sizes'
+
+    def __init__(self, n: int):
+        self._disjoint = n
+        self._parents = list(range(n))
+        self._sizes = [1] * n
+
+    @property
+    def disjoint(self, /) -> int:
+        return self._disjoint
+
+    @property
+    def sizes(self, /):
+        return iter(self._sizes)
+
+    def find(self, key: int, /):
+        if self._parents[key] != key:
+            self._parents[key] = self.find(self._parents[key])  # path compression
+
+        return self._parents[key]
+
+    def union(self, v: int, u: int, /):
+        if (vroot := self.find(v)) != (uroot := self.find(u)):
+
+            self._disjoint -= 1
+
+            # union by size: attach the smaller tree under the root of
+            # the larger tree to keep the tree as flat as possible.
+
+            if self._sizes[bigger := vroot] < self._sizes[smaller := uroot]:
+                bigger, smaller = smaller, bigger
+
+            self._parents[smaller] = bigger
+            self._sizes[bigger] += self._sizes[smaller]
 
 
 # Constants
@@ -25,33 +63,25 @@ with open('2025/day-08-input.txt') as file:
 
 # Solution
 
-euclideandistance = lambda p, q: sqrt(sum((pcoord - qcoord) ** 2 for pcoord, qcoord in zip(p, q, strict=True)))
+norm = lambda p, q: ((p.x - q.x) ** 2 + (p.y - q.y) ** 2 + (p.z - q.z) ** 2)
 
-edges = [
-    Connection(i, j, euclideandistance(jboxs[i], jboxs[j]))
-    for i, j in combinations(range(len(jboxs)), 2)
-    if i != j
-]
-edges.sort(key=lambda connection: connection.distance)
-
-parent = list(range(len(jboxs)))  # track the root jbox for every circuit
+edges = [(norm(jboxs[i], jboxs[j]), i, j) for i, j in combinations(range(len(jboxs)), 2)]
 
 connections = 0
-# perform connections until only one circuit (disjoint set) remains
-for i, j, distance in edges:
-    u = parent[i]
-    v = parent[j]
-    # substitute the root of j with the root of i
-    for idx, p in enumerate(parent):
-        if p == v:
-            parent[idx] = u
+
+circuits = UnionFind(n=len(jboxs))
+
+heapify(edges)
+while edges:
+    distance, i, j = heappop(edges)
+
+    circuits.union(i, j)
 
     connections += 1
 
     if connections == n:
-        circuits = Counter(parent)
-        print('Silver solution:', prod(size for root, size in circuits.most_common(m)))
+        print('Silver solution:', prod(nlargest(3, circuits.sizes)))
 
-    if all(p == u for p in parent):
+    if circuits.disjoint == 1:
         print('Gold solution:', jboxs[i].x * jboxs[j].x)
         break

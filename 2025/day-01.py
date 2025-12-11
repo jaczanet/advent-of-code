@@ -1,14 +1,6 @@
 # https://adventofcode.com/2025/day/1
 
 
-# Constants
-
-mod = 100
-start = 50
-
-
-# Input
-
 def asintger(rotation: str) -> int:
     direction = rotation[0]
     clicks = rotation[1:]
@@ -21,8 +13,16 @@ def asintger(rotation: str) -> int:
     return sign * int(clicks)
 
 
-with open('2025/day-01-input.txt') as instructions:
-    rotations = tuple(map(asintger, instructions))
+# Constants
+
+mod = 100
+start = 50
+
+
+# Input
+
+with open('2025/day-01-input.txt') as file:
+    rotations = tuple(map(asintger, file))
 
 
 # Solution
@@ -32,12 +32,12 @@ zeropasses = 0  # count how many times the dial points to '0' during or after a 
 
 position = start
 for rotation in rotations:
-    if position == 0 and rotation < 0:
-        zeropasses -= 1
+    if -rotation >= position and position != 0:
+        zeropasses += 1
 
     position += rotation
 
-    zeropasses += int(abs(position - mod / 2) + mod / 2) // mod
+    zeropasses += abs(position) // mod
 
     position %= mod
 

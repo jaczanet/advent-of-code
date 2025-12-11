@@ -1,29 +1,37 @@
 # https://adventofcode.com/2025/day/2
 
 
+from functools import cache
+
+
+def divisors(n: int) -> set[int]:
+    divisors = {1, n}
+    for i in range(2, int(n ** (1 / 2)) + 1):
+        if n % i == 0:
+            divisors.add(i)
+            divisors.add(n // i)
+    return divisors
+
+
+@cache
+def submultiples(n: int) -> set[int]:
+    submultiples = divisors(n)
+    submultiples.remove(n)
+    return submultiples
+
+
 # Input
 
 with open('2025/day-02-input.txt') as file:
     ranges = tuple(
         range(start, stop + 1)
         for start, stop in (
-            map(int, stringrange.split('-'))
-            for stringrange in file.read().split(',')
+            map(int, stringrange.split('-')) for stringrange in file.read().split(',')
         )
     )
 
 
 # Solution
-
-def submultiples(n: int) -> set[int]:
-    submultiples = set()
-    for i in range(1, int(n ** (1 / 2)) + 1):
-        if n % i == 0:
-            submultiples.add(i)
-            submultiples.add(n // i)
-    submultiples.remove(n)
-    return submultiples
-
 
 twice = 0
 repeated = 0
