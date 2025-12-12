@@ -1,6 +1,10 @@
 # https://adventofcode.com/2025/day/4
 
-from itertools import product
+from collections import namedtuple
+from itertools import starmap, product
+from functools import cache
+
+Coordinate = namedtuple('Coordinate', ['i', 'j'])
 
 
 # Input
@@ -11,44 +15,44 @@ with open('2025/day-04-input.txt') as file:
 
 # Solution
 
-cells = len(diagram)
-iswithinbounds = lambda x, y: 0 <= x < cells and 0 <= y < cells
+limit = len(diagram)
+
+iswithinbounds = lambda coord: 0 <= coord.i < limit and 0 <= coord.j < limit
+
+allcoords = tuple(starmap(Coordinate, product(range(limit), repeat=2)))
 
 
-def neighbours(center) -> set:
-    """Given a center position, returns a set of all the neighbouring positions in the diagram."""
-    x, y = center
-    positions = {
-        pos
-        for dx, dy in product(range(-1, 2), repeat=2)
-        if iswithinbounds(*(pos := (x + dx, y + dy)))
-    }
-    positions.remove(center)
-    return positions
+contourdeltas = set(product(range(-1, 2), repeat=2))
+contourdeltas.remove((0, 0))
+
+contour = lambda coord: (Coordinate(coord.i + dy, coord.j + dx) for dy, dx in contourdeltas)
+
+neighbours = lambda coord: tuple(filter(iswithinbounds, contour(coord)))
+neighbours = cache(neighbours)
 
 
-def remove(diagram) -> int:
-    """Edits the matrix *IN PLACE* and returns the amount of removed paper rools."""
-    collecting = list()  # stores (x, y) positions of the removable paper rolls
+ispaperroll = lambda coord: diagram[coord.i][coord.j] == '@'
 
-    for x, y in product(range(cells), repeat=2):
-        if diagram[x][y] == '@':
-            position = (x, y)
+paperaround = lambda coord: len(tuple(filter(ispaperroll, neighbours(coord))))
 
-            paperaround = [diagram[x][y] for x, y in neighbours(position)].count('@')
-
-            if paperaround < 4:
-                collecting.append(position)
-
-    for x, y in collecting:
-        diagram[x][y] = 'x'
-
-    return len(collecting)
+iscollectable = lambda coord: paperaround(coord) < 4
 
 
-total = remove(diagram)
-print('Silver solution:', total)
+def remove() -> int:
+    """Edits the matrix *IN PLACE* and yields the amount of removed paper rools."""
+    papercoords = set(filter(ispaperroll, allcoords))
+    while collectable := set(filter(iscollectable, papercoords)):
 
-while collected := remove(diagram):
-    total += collected
-print('Gold solution:', total)
+        for coord in collectable:
+            diagram[coord.i][coord.j] = 'x'
+        else:
+            papercoords -= collectable
+
+        yield len(collectable)
+
+
+collector = remove()
+collected = next(collector)
+
+print('Silver solution:', collected)
+print('Gold solution:', collected + sum(collector))
