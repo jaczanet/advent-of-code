@@ -5,32 +5,36 @@ from functools import partial
 
 # Constants
 
-start = 'you'  # starting device label
-end = 'out'  # ending device label
+YOU = 'you'  # starting device label
+OUT = 'out'  # ending device label
+SERVER = 'svr'  # server device label
+DAC = 'dac'  # dac device label
+FFT = 'fft'  # fft device label
 
 
 # Input
 
 with open('2025/day-11-input.txt') as file:
-    devices = {
-        device: outputs.strip().split()
+    connections = {
+        device: tuple(outputs.strip().split())
         for device, outputs in map(partial(str.split, sep=':'), file)
     }
+
+connections[OUT] = tuple()  # reduce edge cases
 
 
 # Solution
 
-paths = 0
+def countpaths(start, end) -> int:
+    memo = {end: 1}  # number of distinct paths from each node to the end
 
-stack = devices[start]
-while stack:
+    def find(current):
+        if current not in memo:
+            memo[current] = sum(map(find, connections[current]))
+        return memo[current]
 
-    device = stack.pop()
-
-    if device == end:
-        paths += 1
-    else:
-        stack.extend(devices[device])
+    return find(start)
 
 
-print('Silver solution:', paths)
+print('Silver solution:', countpaths(YOU, OUT))
+print('Gold solution:', countpaths(SERVER, FFT) * countpaths(FFT, DAC) * countpaths(DAC, OUT))
