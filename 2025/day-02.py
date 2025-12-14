@@ -26,7 +26,8 @@ with open('2025/day-02-input.txt') as file:
     ranges = tuple(
         range(start, stop + 1)
         for start, stop in (
-            map(int, stringrange.split('-')) for stringrange in file.read().split(',')
+            map(int, stringrange.split('-'))
+            for stringrange in file.read().split(',')
         )
     )
 

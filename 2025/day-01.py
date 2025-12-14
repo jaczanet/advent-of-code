@@ -15,8 +15,8 @@ def asintger(rotation: str) -> int:
 
 # Constants
 
-mod = 100
-start = 50
+MOD = 100
+START = 50
 
 
 # Input
@@ -30,16 +30,16 @@ with open('2025/day-01-input.txt') as file:
 zerohits = 0  # count how many times the dial is left pointing at '0' after a rotation
 zeropasses = 0  # count how many times the dial points to '0' during or after a rotation
 
-position = start
+position = START
 for rotation in rotations:
     if -rotation >= position and position != 0:
         zeropasses += 1
 
     position += rotation
 
-    zeropasses += abs(position) // mod
+    zeropasses += abs(position) // MOD
 
-    position %= mod
+    position %= MOD
 
     zerohits += position == 0
 

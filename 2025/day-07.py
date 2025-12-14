@@ -1,5 +1,6 @@
 # https://adventofcode.com/2025/day/7
 
+
 from functools import partial
 
 

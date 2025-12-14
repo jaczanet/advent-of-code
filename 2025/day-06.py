@@ -1,32 +1,33 @@
 # https://adventofcode.com/2025/day/6
 
+
 from operator import add, mul
 from functools import reduce
 
 
 # Constants
 
-operators = {'+': add, '*': mul}
+OPERATORS = {'+': add, '*': mul}
 
 
 # Input
 
 with open('2025/day-06-input.txt') as file:
     worksheet = map(str.split, file)
-    problems = [
+    problems = tuple(
         {
-            'operation': operators[column[-1]],
+            'operation': OPERATORS[column[-1]],
             'numbers': tuple(map(int, column[:-1])),
         }
         for column in zip(*worksheet)
-    ]
+    )
 
 
 cephalopodmath = list()
 with open('2025/day-06-input.txt') as file:
     lines = file.read().strip().split('\n')
 
-padding = len(max(lines, key=len)) + 1  # '+1' to add an empty column after the last problem
+padding = max(len(line) for line in lines) + 1  # '+1' to add an empty column after the last problem
 addpadding = lambda string: string.ljust(padding)
 columns = zip(*map(addpadding, lines), strict=True)
 
@@ -40,7 +41,7 @@ for column in columns:
     else:  # empty column found: delimiter for problem's end
         cephalopodmath.append(
             {
-                'operation': operators[operation],
+                'operation': OPERATORS[operation],
                 'numbers': tuple(map(int, numbers)),
             }
         )

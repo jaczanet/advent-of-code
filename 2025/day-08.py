@@ -39,7 +39,7 @@ class UnionFind:
 
             self._disjoint -= 1
 
-            # union by size: attach the smaller tree under the root of
+            # Union by size: attach the smaller tree under the root of
             # the larger tree to keep the tree as flat as possible.
 
             if self._sizes[bigger := vroot] < self._sizes[smaller := uroot]:
@@ -51,9 +51,8 @@ class UnionFind:
 
 # Constants
 
-# for silver part
-n = 1000  # total number of connections to perform
-m = 3  # number of largest circuits to be considered
+N = 1000  # total number of connections to perform, for silver solution
+M = 3  # number of largest circuits to consider, for silver solution
 
 
 # Input
@@ -80,8 +79,8 @@ while edges:
 
     connections += 1
 
-    if connections == n:
-        print('Silver solution:', prod(nlargest(3, circuits.sizes)))
+    if connections == N:
+        print('Silver solution:', prod(nlargest(M, circuits.sizes)))
 
     if circuits.disjoint == 1:
         print('Gold solution:', jboxs[i].x * jboxs[j].x)
