@@ -7,23 +7,24 @@ from functools import partial
 # Input
 
 with open('2025/day-07-input.txt') as file:
-    start = next(file).strip()
-    diagram = file.read().strip()
+    start = next(file)
+    diagram = file.read()
 
 
 beam = int(start.replace('.', '0').replace('S', '1'), base=2)
 manifold = tuple(
     map(
         partial(int, base=2),
-        diagram.replace('.', '0').replace('^', '1').split('\n')[1::2],
+        diagram.replace('.', '0').replace('^', '1').splitlines()[1::2],
     )
 )
 
 
 # Solution
 
-bits = len(start)
-quantum = [0] * bits
+BITS = len(start.strip())
+
+quantum = [0] * BITS
 quantum[start.index("S")] = 1
 
 splits = 0
@@ -36,7 +37,7 @@ for splitters in manifold:
     beam &= ~splitters  # keep untouched beams
     beam |= new  # add new splitted beams
 
-    mask = bin(hits)[2:].rjust(bits, '0')
+    mask = bin(hits)[2:].rjust(BITS, '0')
     for i, bit in enumerate(mask):
         if bit == '1':
 

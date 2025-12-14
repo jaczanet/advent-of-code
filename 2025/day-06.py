@@ -28,7 +28,7 @@ with open('2025/day-06-input.txt') as file:
 
 cephalopodmath = list()
 with open('2025/day-06-input.txt') as file:
-    lines = file.read().strip().split('\n')
+    lines = file.read().splitlines()
 
 padding = max(len(line) for line in lines) + 1  # '+1' to add an empty column after the last problem
 addpadding = lambda string: string.ljust(padding)

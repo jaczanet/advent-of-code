@@ -102,7 +102,7 @@ FFT = 'fft'  # fft device label
 with open('2025/day-11-input.txt') as file:
     network = Graph(
         {
-            device: tuple(outputs.strip().split())
+            device: tuple(outputs.split())
             for device, outputs in map(partial(str.split, sep=':'), file)
         }
     )
