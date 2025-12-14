@@ -15,7 +15,7 @@ class UnionFind:
 
     __slots__ = '_disjoint', '_parents', '_sizes'
 
-    def __init__(self, n: int):
+    def __init__(self, /, n: int):
         self._disjoint = n
         self._parents = list(range(n))
         self._sizes = [1] * n
@@ -25,28 +25,37 @@ class UnionFind:
         return self._disjoint
 
     @property
-    def sizes(self, /):
+    def sizes(self, /) -> list[int]:
         return iter(self._sizes)
 
-    def find(self, key: int, /):
-        if self._parents[key] != key:
-            self._parents[key] = self.find(self._parents[key])  # path compression
+    def find(self, v: int, /) -> int:
+        if self._parents[v] != v:
+            self._parents[v] = self.find(self._parents[v])  # path compression
 
-        return self._parents[key]
+        return self._parents[v]
 
-    def union(self, v: int, u: int, /):
-        if (vroot := self.find(v)) != (uroot := self.find(u)):
+    def union(self, u: int, v: int, /) -> None:
+        if (uroot := self.find(u)) != (vroot := self.find(v)):
 
             self._disjoint -= 1
 
             # Union by size: attach the smaller tree under the root of
             # the larger tree to keep the tree as flat as possible.
 
-            if self._sizes[bigger := vroot] < self._sizes[smaller := uroot]:
+            if self._sizes[bigger := uroot] < self._sizes[smaller := vroot]:
                 bigger, smaller = smaller, bigger
 
             self._parents[smaller] = bigger
             self._sizes[bigger] += self._sizes[smaller]
+
+
+# The exact euclidian dinstance it's not needed here: sqrt(x) is monotone
+# function, comparing sqrt(x) with sqrt(y) is equivalent to comparing x and y.
+# Comparisons are performed only in order to sort the edges according to their
+# weight. The computed values for the weight are not used again. Hence, a more
+# generic "norm" is sufficient to the scope.
+
+norm = lambda p, q: ((p.x - q.x) ** 2 + (p.y - q.y) ** 2 + (p.z - q.z) ** 2)
 
 
 # Constants
@@ -63,8 +72,6 @@ with open('2025/day-08-input.txt') as file:
 
 # Solution
 
-norm = lambda p, q: ((p.x - q.x) ** 2 + (p.y - q.y) ** 2 + (p.z - q.z) ** 2)
-
 edges = [(norm(jboxs[i], jboxs[j]), i, j) for i, j in combinations(range(len(jboxs)), 2)]
 
 connections = 0
@@ -73,7 +80,7 @@ circuits = UnionFind(n=len(jboxs))
 
 heapify(edges)
 while edges:
-    distance, i, j = heappop(edges)
+    weight, i, j = heappop(edges)
 
     circuits.union(i, j)
 

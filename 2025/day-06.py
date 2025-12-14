@@ -5,6 +5,9 @@ from operator import add, mul
 from functools import reduce
 
 
+solve = lambda problem: reduce(problem['operation'], problem['numbers'])
+
+
 # Constants
 
 OPERATORS = {'+': add, '*': mul}
@@ -16,10 +19,10 @@ with open('2025/day-06-input.txt') as file:
     worksheet = map(str.split, file)
     problems = tuple(
         {
-            'operation': OPERATORS[column[-1]],
-            'numbers': tuple(map(int, column[:-1])),
+            'operation': OPERATORS[operation],
+            'numbers': tuple(map(int, numbers)),
         }
-        for column in zip(*worksheet)
+        for *numbers, operation in zip(*worksheet)
     )
 
 
@@ -32,10 +35,10 @@ addpadding = lambda string: string.ljust(padding)
 columns = zip(*map(addpadding, lines), strict=True)
 
 numbers = list()
-for column in columns:
+for *digits, operation_or_space in columns:
     if not numbers:
-        operation = column[-1]
-    content = ''.join(column[:-1]).strip()
+        operation = operation_or_space
+    content = ''.join(digits).strip()
     if content:
         numbers.append(content)
     else:  # empty column found: delimiter for problem's end
@@ -49,8 +52,6 @@ for column in columns:
 
 
 # Solution
-
-solve = lambda problem: reduce(problem['operation'], problem['numbers'])
 
 print('Silver solution:', sum(map(solve, problems)))
 print('Gold solution:', sum(map(solve, cephalopodmath)))

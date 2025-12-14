@@ -47,15 +47,11 @@ for idrange in ranges:
             slices = (string[i : i + slicelen] for i in range(0, length, slicelen))
 
             pattern = next(slices)
-            for slice in slices:
-
-                if slice != pattern:
-                    break
-
-            else:
+            if all(slice == pattern for slice in slices):
+            
                 repeated += id
 
-                if length == slicelen * 2:
+                if 2 * slicelen == length:
                     twice += id
 
                 break

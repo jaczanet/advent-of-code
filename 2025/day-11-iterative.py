@@ -9,7 +9,7 @@ from math import prod
 
 class Graph:
 
-    def __init__(self, adjencylist):
+    def __init__(self, /, adjencylist):
         self._adjlist = adjencylist.copy()  # prevent external modifications
 
         for missing in set(chain(*adjencylist.values())) - set(adjencylist):
@@ -23,9 +23,9 @@ class Graph:
         return frozenset(self._adjlist.keys())
 
     def edgesof(self, *vertices):
-        for v in vertices:
-            for u in self._adjlist[v]:
-                yield (v, u)
+        for u in vertices:
+            for v in self._adjlist[u]:
+                yield (u, v)
 
     @cached_property
     def edges(self, /) -> tuple:
@@ -36,8 +36,8 @@ class Graph:
         """Return a mapping from each vertex to its in-degree value."""
         indegree = dict.fromkeys(self.vertices, 0)
 
-        for v, u in self.edges:
-            indegree[u] += 1
+        for u, v in self.edges:
+            indegree[v] += 1
 
         return indegree
 
@@ -75,15 +75,15 @@ class Graph:
         """Return a mapping from each vertex to its index in the topological order."""
         return {vertex: idx for idx, vertex in enumerate(self.ordtopological)}
 
-    def paths(self, start, end) -> int:
+    def paths(self, /, start, end) -> int:
         """Computes the toal number of possible paths from 'start' to 'end'."""
         countpaths = dict.fromkeys(self.vertices, 0)
         countpaths[start] = 1  # base case
 
         reachables = self.ordtopological[self._index[start] : self._index[end]]
 
-        for v, u in self.edgesof(*reachables):
-            countpaths[u] += countpaths[v]
+        for u, v in self.edgesof(*reachables):
+            countpaths[v] += countpaths[u]
 
         return countpaths[end]
 
@@ -110,5 +110,5 @@ with open('2025/day-11-input.txt') as file:
 
 # Solution
 
-print('Silver solution:', network.paths(YOU, OUT))
+print('Silver solution:', network.paths(start=YOU, end=OUT))
 print('Gold solution:', prod(starmap(network.paths, pairwise((SERVER, FFT, DAC, OUT)))))
