@@ -42,7 +42,7 @@ neighbours = cache(neighbours)
 
 ispaper = lambda coord: diagram[coord.i][coord.j] == PAPER_STRING
 
-paperaround = lambda coord: len(tuple(filter(ispaperroll, neighbours(coord))))
+paperaround = lambda coord: len(tuple(filter(ispaper, neighbours(coord))))
 
 iscollectable = lambda coord: paperaround(coord) < 4
 
