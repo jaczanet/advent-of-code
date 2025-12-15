@@ -28,8 +28,8 @@ class Graph:
                 yield (u, v)
 
     @cached_property
-    def edges(self, /) -> tuple:
-        return tuple(self.edgesof(*self.vertices))
+    def edges(self, /) -> frozenset:
+        return frozenset(self.edgesof(*self.vertices))
 
     @cached_property
     def indegrees(self, /) -> dict:
@@ -99,7 +99,7 @@ FFT = 'fft'  # fft device label
 
 # Input
 
-with open('2025/day-11-input.txt') as file:
+with open('2025/inputs/day-11.txt') as file:
     network = Graph(
         {
             device: tuple(outputs.split())

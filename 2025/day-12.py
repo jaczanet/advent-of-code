@@ -12,10 +12,11 @@ MAXSIZE = 3 * 3
 
 # Input
 
-with open('2025/day-12-input.txt') as file:
+with open('2025/inputs/day-12.txt') as file:
     *shapes, layouts = file.read().split('\n\n')
 
 sizes = tuple(string.count('#') for string in shapes)
+
 regions = tuple(
     (prod(map(int, widthXlength.split('x'))), tuple(map(int, gifts.split())))
     for widthXlength, gifts in map(partial(str.split, sep=':'), layouts.splitlines())

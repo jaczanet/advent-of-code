@@ -11,7 +11,7 @@ Position = namedtuple('Position', ['x', 'y'])
 
 # Input
 
-with open('2025/day-09-input.txt') as file:
+with open('2025/inputs/day-09.txt') as file:
     redtiles = tuple(Position(*map(int, coords)) for coords in csvreader(file))
 
 

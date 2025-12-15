@@ -35,7 +35,10 @@ class UnionFind:
         return self._parents[v]
 
     def union(self, u: int, v: int, /) -> None:
-        if (uroot := self.find(u)) != (vroot := self.find(v)):
+        uroot = self.find(u)
+        vroot = self.find(v)
+
+        if uroot != vroot:
 
             self._disjoint -= 1
 
@@ -51,9 +54,9 @@ class UnionFind:
 
 # The exact euclidian dinstance it's not needed here: sqrt(x) is monotone
 # function, comparing sqrt(x) with sqrt(y) is equivalent to comparing x and y.
-# Comparisons are performed only in order to sort the edges according to their
-# weight. The computed values for the weight are not used again. Hence, a more
-# generic "norm" is sufficient to the scope.
+# Comparisons are performed only in order to sort the edges according to
+# their weight. The computed values for the weight are not used again.
+# Hence, a more generic "norm" is sufficient to the scope.
 
 norm = lambda p, q: ((p.x - q.x) ** 2 + (p.y - q.y) ** 2 + (p.z - q.z) ** 2)
 
@@ -66,13 +69,16 @@ M = 3  # number of largest circuits to consider, for silver solution
 
 # Input
 
-with open('2025/day-08-input.txt') as file:
+with open('2025/inputs/day-08.txt') as file:
     jboxs = tuple(Position(*map(int, coords)) for coords in csvreader(file))
 
 
 # Solution
 
-edges = [(norm(jboxs[i], jboxs[j]), i, j) for i, j in combinations(range(len(jboxs)), 2)]
+edges = [
+    (norm(jboxs[i], jboxs[j]), i, j)
+    for i, j in combinations(range(len(jboxs)), 2)
+]
 
 connections = 0
 

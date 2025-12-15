@@ -2,7 +2,7 @@
 
 
 def maxjoltage(bank: tuple[int], n: int) -> int:
-    '''Returns the maximum joltage obtainable by activating n batteries in a bank.'''
+    """Returns the maximum joltage obtainable by activating n batteries in a bank."""
     total = 0
 
     start = 0
@@ -20,8 +20,8 @@ def maxjoltage(bank: tuple[int], n: int) -> int:
 
 # Input
 
-with open('2025/day-03-input.txt') as file:
-    banks = tuple(tuple(map(int, stringbank.strip())) for stringbank in file.readlines())
+with open('2025/inputs/day-03.txt') as file:
+    banks = tuple(tuple(map(int, stringbank.strip())) for stringbank in file)
 
 
 # Solution

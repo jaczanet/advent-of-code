@@ -15,7 +15,7 @@ OPERATORS = {'+': add, '*': mul}
 
 # Input
 
-with open('2025/day-06-input.txt') as file:
+with open('2025/inputs/day-06.txt') as file:
     worksheet = map(str.split, file)
     problems = tuple(
         {
@@ -27,7 +27,7 @@ with open('2025/day-06-input.txt') as file:
 
 
 cephalopodmath = list()
-with open('2025/day-06-input.txt') as file:
+with open('2025/inputs/day-06.txt') as file:
     lines = file.read().splitlines()
 
 padding = max(len(line) for line in lines) + 1  # '+1' to add an empty column after the last problem

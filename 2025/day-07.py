@@ -6,12 +6,12 @@ from functools import partial
 
 # Input
 
-with open('2025/day-07-input.txt') as file:
+with open('2025/inputs/day-07.txt') as file:
     start = next(file)
     diagram = file.read()
 
-
 beam = int(start.replace('.', '0').replace('S', '1'), base=2)
+
 manifold = tuple(
     map(
         partial(int, base=2),

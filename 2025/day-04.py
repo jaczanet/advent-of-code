@@ -16,7 +16,7 @@ PAPER_STRING = '@'
 
 # Input
 
-with open('2025/day-04-input.txt') as file:
+with open('2025/inputs/day-04.txt') as file:
     diagram = tuple(list(line.strip()) for line in file)
 
 

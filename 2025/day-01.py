@@ -21,7 +21,7 @@ START = 50
 
 # Input
 
-with open('2025/day-01-input.txt') as file:
+with open('2025/inputs/day-01.txt') as file:
     rotations = tuple(map(asintger, file))
 
 

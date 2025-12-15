@@ -10,12 +10,12 @@ def countpaths(graph, start, end) -> int:
 
     memo = {end: 1}  # number of distinct paths from each vertex to the end
 
-    def find(vertex):
+    def findpaths(vertex) -> int:
         if vertex not in memo:
-            memo[vertex] = sum(map(find, graph[vertex]))
+            memo[vertex] = sum(map(findpaths, graph[vertex]))
         return memo[vertex]
 
-    return find(start)
+    return findpaths(start)
 
 
 # Constants
@@ -29,7 +29,7 @@ FFT = 'fft'  # fft device label
 
 # Input
 
-with open('2025/day-11-input.txt') as file:
+with open('2025/inputs/day-11.txt') as file:
     network = {
         device: tuple(outputs.split())
         for device, outputs in map(partial(str.split, sep=':'), file)
