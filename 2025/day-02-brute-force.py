@@ -22,7 +22,7 @@ def submultiples(n: int) -> set[int]:
 
 # Input
 
-with open('2025/day-02-input.txt') as file:
+with open('2025/inputs/day-02.txt') as file:
     ranges = tuple(
         range(start, stop + 1)
         for start, stop in (
@@ -47,8 +47,8 @@ for idrange in ranges:
             slices = (string[i : i + slicelen] for i in range(0, length, slicelen))
 
             pattern = next(slices)
-            if all(slice == pattern for slice in slices):
-            
+            if all(slc == pattern for slc in slices):
+
                 repeated += id
 
                 if 2 * slicelen == length:
