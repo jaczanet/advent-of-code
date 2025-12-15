@@ -3,65 +3,63 @@
 
 # Input
 
-with open('2025/day-05-input.txt') as file:
-    ranges, ids = file.read().strip().split('\n\n')
+with open('2025/inputs/day-05.txt') as file:
+    intervals, ids = file.read().split('\n\n')
 
-freshranges = tuple(
-    range(start, stop + 1)
+freshranges = [
+    (start, stop)
     for start, stop in (
         map(int, stringrange.split('-'))
-        for stringrange in ranges.split('\n')
+        for stringrange in intervals.splitlines()
     )
-)
+]
 
-inventory = tuple(map(int, ids.split('\n')))
+inventory = list(map(int, ids.splitlines()))
 
 
 # Solution
 
-# remove redundancy
-uniques = list()
-freshranges = sorted(freshranges, key=lambda r: (r.start, r.stop))
-prevstart = prevstop = -1
+freshranges.sort()
+inventory.sort()
 
-for idrange in freshranges:
-    currstart, currstop = idrange.start, idrange.stop
 
-    # merge
-    if currstart <= prevstop:
-        prevstop = max(prevstop, currstop)
+mergedranges = list()
+mutableranges = map(list, freshranges)
+
+prev = next(mutableranges)
+mergedranges.append(prev)
+
+for curr in mutableranges:
+
+    # prev: [a, b]; curr, at most: [b + 1, x] -> merge
+    if curr[0] <= prev[1] + 1:
+
+        # update the previous range's stop *in place*
+        prev[1] = max(prev[1], curr[1])
 
     else:
-        uniques.append(range(prevstart, prevstop))
-        prevstart, prevstop = currstart, currstop
-else:
-    # handle the final case
-    uniques.append(range(prevstart, prevstop))
+        mergedranges.append(curr)
+        prev = curr
 
-freshranges = uniques
-
-inventory = sorted(inventory)
 
 fresh = 0
-last = 0
-for id in inventory:
-    for j in range(last, len(freshranges)):
-        idrange = freshranges[j]
-        if id < idrange.start:
-            break
-        elif id in idrange:
-            fresh += 1
-            last = j
-            break
-        elif id >= idrange.stop:
-            last = j
+total = 0
 
+stop = -float('Inf')
+ranges = iter(mergedranges)
+
+try:
+
+    for id in inventory:
+        while id > stop:
+            start, stop = next(ranges)
+            total += -start + stop + 1
+        else:
+            if id >= start:
+                fresh += 1
+
+except StopIteration:
+    pass
 
 print('Silver solution:', fresh)
-
-
-total = 0
-for idrange in freshranges:
-    total += len(idrange)
-
 print('Gold solution:', total)
