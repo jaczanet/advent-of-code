@@ -1,9 +1,6 @@
 # https://adventofcode.com/2025/day/2
 
 
-from itertools import count
-
-
 # Input
 
 with open('2025/inputs/day-02.txt') as file:
@@ -21,20 +18,25 @@ with open('2025/inputs/day-02.txt') as file:
 ranges.sort()
 
 
-MAXIMUM = ranges[-1][1]
-candidates = set()
+maximum = ranges[-1][1]
+maxdigits = len(str(maximum))
 
-for repeat in range(2, len(str(MAXIMUM)) + 1):
-    for pattern in map(str, count()):
+generated = set()
 
-        invalid = int(pattern * repeat)
+for digits in range(1, maxdigits // 2 + 1):
+    magnitude = 10**digits
 
-        if invalid > MAXIMUM:
-            break
-        else:
-            candidates.add(invalid)
+    for repeat in range(2, maxdigits // digits + 1):
+        mask = (magnitude**repeat - 1) // (magnitude - 1)
 
-candidates = sorted(candidates)
+        for pattern in range(
+            magnitude // 10,
+            min(magnitude, maximum // mask + 1),
+        ):
+            generated.add(pattern * mask)
+
+
+candidates = sorted(generated)  # most expensive line in this script
 
 
 twice = 0
