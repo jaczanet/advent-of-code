@@ -4,20 +4,16 @@
 from functools import cache
 
 
-def divisors(n: int) -> set[int]:
-    divisors = {1, n}
-    for i in range(2, int(n ** (1 / 2)) + 1):
+@cache  # prevent useless recalculation
+def submultiples(n: int) -> tuple[int]:
+    # tailored to the problem domain
+    divisors = set()
+    for i in range(1, int(n ** (1 / 2)) + 1):
         if n % i == 0:
             divisors.add(i)
             divisors.add(n // i)
-    return divisors
-
-
-@cache
-def submultiples(n: int) -> set[int]:
-    submultiples = divisors(n)
-    submultiples.remove(n)
-    return submultiples
+    divisors.remove(n)
+    return tuple(sorted(divisors, reverse=True))
 
 
 # Input
@@ -43,11 +39,8 @@ for idrange in ranges:
         string = str(id)
         length = len(string)
 
-        for slicelen in sorted(submultiples(length), reverse=True):
-            slices = (string[i : i + slicelen] for i in range(0, length, slicelen))
-
-            pattern = next(slices)
-            if all(slc == pattern for slc in slices):
+        for slicelen in submultiples(length):  # in decreasing order
+            if string == string[:slicelen] * (length // slicelen):
 
                 repeated += id
 
