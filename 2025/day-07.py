@@ -22,9 +22,9 @@ manifold = tuple(
 
 # Solution
 
-BITS = len(start.strip())
+bits = len(start.strip())
 
-quantum = [0] * BITS
+quantum = [0] * bits
 quantum[start.index("S")] = 1
 
 splits = 0
@@ -37,7 +37,7 @@ for splitters in manifold:
     beam &= ~splitters  # keep untouched beams
     beam |= new  # add new splitted beams
 
-    mask = bin(hits)[2:].rjust(BITS, '0')
+    mask = bin(hits)[2:].rjust(bits, '0')
     for i, bit in enumerate(mask):
         if bit == '1':
 

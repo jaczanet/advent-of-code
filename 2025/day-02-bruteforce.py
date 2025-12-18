@@ -4,7 +4,7 @@
 from functools import cache
 
 
-@cache  # prevent useless recalculation
+@cache  # prevent futile recomputation
 def submultiples(n: int) -> tuple[int]:
     # tailored to the problem domain
     divisors = set()
@@ -30,7 +30,7 @@ with open('2025/inputs/day-02.txt') as file:
 
 # Solution
 
-twice = 0
+reptwice = 0
 repeated = 0
 
 for idrange in ranges:
@@ -45,9 +45,9 @@ for idrange in ranges:
                 repeated += id
 
                 if 2 * slicelen == length:
-                    twice += id
+                    reptwice += id
 
                 break
 
-print('Silver solution:', twice)
+print('Silver solution:', reptwice)
 print('Gold solution:', repeated)

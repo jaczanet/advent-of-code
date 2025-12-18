@@ -36,10 +36,10 @@ for digits in range(1, maxdigits // 2 + 1):
             generated.add(pattern * mask)
 
 
-candidates = sorted(generated)  # most expensive line in this script
+candidates = sorted(generated)
 
 
-twice = 0
+reptwice = 0
 repeated = 0
 
 stop = -float('Inf')
@@ -55,7 +55,7 @@ for id in candidates:
             string = str(id)
             mid = len(string) // 2
             if string[:mid] == string[mid:]:
-                twice += id
+                reptwice += id
 
-print('Silver solution:', twice)
+print('Silver solution:', reptwice)
 print('Gold solution:', repeated)
