@@ -2,89 +2,70 @@
 
 
 from csv import reader as csvreader
-from collections import namedtuple
 from itertools import combinations, pairwise
-from functools import partial
 
 
-Position = namedtuple('Position', ['x', 'y'])
+def ordercoords(corners) -> tuple:
+    (x1, y1), (x2, y2) = corners
+
+    if y1 > y2:
+        y1, y2 = y2, y1
+
+    if x1 > x2:
+        x1, x2 = x2, x1
+
+    return x1, x2, y1, y2
+
+
+def area(rectangle) -> int:
+    xleft, xright, ytop, ylow = rectangle
+    return (xright - xleft + 1) * (ylow - ytop + 1)
 
 
 # Input
 
 with open('2025/inputs/day-09.txt') as file:
-    redtiles = tuple(Position(*map(int, coords)) for coords in csvreader(file))
+    redtiles = tuple(tuple(map(int, coords)) for coords in csvreader(file))
 
 
 # Solution
 
-# rectangle area enclosed between two tiles
-area = lambda p, q: (abs(p.x - q.x) + 1) * (abs(p.y - q.y) + 1)
-
-# red tiles pairs sorter in decreasing order according to their enclosed area
-pairs = sorted(
-    combinations(redtiles, 2),
-    key=lambda tiles: area(tiles[0], tiles[1]),
+rectangles = sorted(
+    map(ordercoords, combinations(redtiles, 2)),
+    key=area,
     reverse=True,
 )
 
-a, b = pairs[0]
-print('Silver solution:', area(a, b))
+horizontals = list()
+verticals = list()
 
-contour = tuple(pairwise(redtiles + (redtiles[0],)))
+contour = pairwise(redtiles + (redtiles[0],))
+for edge in map(ordercoords, contour):
+    x1, x2, y1, y2 = edge
 
-horizontal = list()
-vertical = list()
-
-for edge in contour:
-    p, q = edge
-
-    if p.x == q.x:
-        vertical.append(sorted(edge))
-    elif p.y == q.y:
-        horizontal.append(sorted(edge))
-    else:
-        raise ValueError
+    if x1 == x2:
+        verticals.append(edge)
+    elif y1 == y2:
+        horizontals.append(edge)
 
 
-def valid(pair: tuple[Position]) -> bool:
-    xs = sorted(tile.x for tile in pair)
-    ys = sorted(tile.y for tile in pair)
+def valid(rectangle) -> bool:
+    xleft, xright, ytop, ylow = rectangle
 
-    # see if any of the sides intersect the contour
-    # check if the horizontal sides intersect any vertical edge of the contour
-    # and if the vertical sides intersect any horizontal edges of the contour
+    # See if any of the rectangle sides intersect the contour: check if
+    # the horizontal sides cross any vertical edge of the contour, or
+    # if the vertical sides cross any horizontal edges of the contour.
 
-    #        c
-    #     -------
-    #   d |     | b
-    #     -------
-    #        a
+    for x1, x2, _, y in horizontals:
+        if (ytop < y < ylow) and (x1 <= xleft <= x2 or x1 <= xright <= x2):
+            return False
 
-    for edge in horizontal:
-        p, q = edge
-
-        if p.x <= xs[0] <= q.x:  # side d might cross edge
-            if ys[0] < p.y < ys[1]:
-                return False
-
-        if p.x <= xs[1] <= q.x:  # side b might cross edge
-            if ys[0] < p.y < ys[1]:
-                return False
-
-    for edge in vertical:
-        p, q = edge
-
-        if p.y <= ys[0] <= q.y:  # side a might cross edge
-            if xs[0] < p.x < xs[1]:
-                return False
-
-        if p.y <= ys[1] <= q.y:  # side b might cross edge
-            if xs[0] < p.x < xs[1]:
-                return False
+    for x, _, y1, y2 in verticals:
+        if (xleft < x < xright) and (y1 <= ytop <= y2 or y1 <= ylow <= y2):
+            return False
 
     return True
 
 
-a, b = next(filter(valid, pairs))
-print('Gold solution:', area(a, b))
+print('Silver solution:', area(rectangles[0]))
+print('Gold solution:', area(next(filter(valid, rectangles))))
