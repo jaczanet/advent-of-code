@@ -61,7 +61,7 @@ class Graph:
             for _, node in self.edgesof(vertex):
                 indegree[node] -= 1
 
-                # A vertex can be insierted in the topological order
+                # A vertex can be inserted in the topological order
                 # once all edges directed into the vertex have been
                 # "removed": i.e. its in-degree value has become 0.
 
